@@ -3,7 +3,7 @@ import axios from 'axios'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import './App.css'
 
-const API_URL = 'http://127.0.0.1:8000'
+const API_URL = 'https://uptime-monitor-production-5f18.up.railway.app'
 
 interface CheckData {
   id: number
