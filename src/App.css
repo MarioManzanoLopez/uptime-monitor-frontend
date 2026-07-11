@@ -1,0 +1,144 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0b0e14;
+  color: #e4e6eb;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-header .subtitle {
+  color: #8b8f99;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.site-selector {
+  background: #161a23;
+  border: 1px solid #262b38;
+  color: #e4e6eb;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.site-selector:hover {
+  border-color: #3a4152;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.status-card {
+  background: #161a23;
+  border: 1px solid #262b38;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.status-card .label {
+  color: #8b8f99;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.status-card .value {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-pill.up {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+}
+
+.status-pill.down {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-dot.up {
+  box-shadow: 0 0 8px 1px rgba(46, 204, 113, 0.6);
+}
+
+.chart-section {
+  background: #161a23;
+  border: 1px solid #262b38;
+  border-radius: 12px;
+  padding: 1.75rem;
+}
+
+.chart-section h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #e4e6eb;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #8b8f99;
+}
+
+.empty-state .icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #262b38;
+}
+
+.recharts-text {
+  fill: #8b8f99;
+  font-size: 0.75rem;
+}
