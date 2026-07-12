@@ -15,18 +15,35 @@ interface CheckData {
   checked_at: string
 }
 
+interface SiteData {
+  name: string
+  url: string
+}
+
 function App() {
-  const [sites, setSites] = useState<string[]>([])
+  const [sites, setSites] = useState<SiteData[]>([])
   const [selectedSite, setSelectedSite] = useState<string>('')
   const [checks, setChecks] = useState<CheckData[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const [showForm, setShowForm] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
+
+  const loadSites = () => {
     axios.get(`${API_URL}/sites`).then(res => {
       setSites(res.data)
-      if (res.data.length > 0) setSelectedSite(res.data[0])
+      if (res.data.length > 0 && !selectedSite) {
+        setSelectedSite(res.data[0].name)
+      }
       setLoading(false)
     }).catch(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadSites()
   }, [])
 
   useEffect(() => {
@@ -35,6 +52,38 @@ function App() {
       setChecks(res.data.reverse())
     })
   }, [selectedSite])
+
+  const handleAddSite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormError('')
+
+    if (!newName.trim() || !newUrl.trim()) {
+      setFormError('Completa ambos campos')
+      return
+    }
+
+    let formattedUrl = newUrl.trim()
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`
+    }
+
+    setSubmitting(true)
+    try {
+      await axios.post(`${API_URL}/sites`, {
+        name: newName.trim(),
+        url: formattedUrl
+      })
+      setNewName('')
+      setNewUrl('')
+      setShowForm(false)
+      loadSites()
+      setSelectedSite(newName.trim())
+    } catch (err: any) {
+      setFormError(err.response?.data?.detail || 'Error al agregar el sitio')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const latestCheck = checks[checks.length - 1]
 
@@ -58,29 +107,59 @@ function App() {
           <h1>Uptime Monitor</h1>
           <div className="subtitle">Monitoreo de disponibilidad en tiempo real</div>
         </div>
-        {sites.length > 0 && (
-          <select
-            className="site-selector"
-            value={selectedSite}
-            onChange={e => setSelectedSite(e.target.value)}
-          >
-            {sites.map(site => (
-              <option key={site} value={site}>{site}</option>
-            ))}
-          </select>
-        )}
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          {sites.length > 0 && (
+            <select
+              className="site-selector"
+              value={selectedSite}
+              onChange={e => setSelectedSite(e.target.value)}
+            >
+              {sites.map(site => (
+                <option key={site.name} value={site.name}>{site.name}</option>
+              ))}
+            </select>
+          )}
+          <button className="add-site-btn" onClick={() => setShowForm(!showForm)}>
+            {showForm ? 'Cancelar' : '+ Agregar sitio'}
+          </button>
+        </div>
       </div>
+
+      {showForm && (
+        <form className="add-site-form" onSubmit={handleAddSite}>
+          <input
+            type="text"
+            placeholder="Nombre (ej. Mi API)"
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="URL (ej. midominio.com)"
+            value={newUrl}
+            onChange={e => setNewUrl(e.target.value)}
+          />
+          <button type="submit" disabled={submitting}>
+            {submitting ? 'Agregando...' : 'Agregar'}
+          </button>
+          {formError && <div className="form-error">{formError}</div>}
+        </form>
+      )}
 
       {loading ? (
         <div className="empty-state">
           <div className="icon">⏳</div>
           Cargando datos...
         </div>
-      ) : !latestCheck ? (
+      ) : sites.length === 0 ? (
         <div className="empty-state">
           <div className="icon">📡</div>
-          Aún no hay datos. Espera a que corra el primer check automático,
-          <br />o dispáralo manualmente desde <code>/docs</code>.
+          Aún no tienes sitios. Agrega uno con el botón de arriba.
+        </div>
+      ) : !latestCheck ? (
+        <div className="empty-state">
+          <div className="icon">⏳</div>
+          Aún no hay checks para este sitio. Espera unos segundos y recarga.
         </div>
       ) : (
         <>
